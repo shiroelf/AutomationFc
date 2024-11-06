@@ -2,17 +2,21 @@ import net.bytebuddy.implementation.auxiliary.MethodCallProxy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
 
 public class Topic_07_TextBox_TextArea {
@@ -42,8 +46,11 @@ public class Topic_07_TextBox_TextArea {
     @BeforeClass
     public void beforeClass() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("headless");
-        options.addArguments("maximized");
+        //options.addArguments("headless");
+        //options.addArguments("maximized");
+
+        options.addArguments("--incognito");
+       // driver = new FirefoxDriver(options1);
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
         Actions actions = new Actions(driver);
@@ -168,6 +175,120 @@ public class Topic_07_TextBox_TextArea {
         Thread.sleep(15000);
         Assert.assertEquals(driver.findElement(By.xpath("//label[text() = 'Number']//parent::div//following-sibling::div//input")).getAttribute("value"),numberImmigration);
         Assert.assertEquals(driver.findElement(By.xpath("//textarea[@placeholder = 'Type Comments here']")).getAttribute("value"),commentLine);
+    }
+    @Test
+    public void TC04_TextBox_TextArea() throws InterruptedException{
+        driver.get("https://demo.nopcommerce.com/register");
+        driver.findElement(By.xpath("//a[@class = 'ico-register']")).click();
+
+        driver.findElement(By.xpath("//div[@id = 'gender']//input[@id = 'gender-male']")).click();
+        Thread.sleep(5000);
+
+        String firstName = "Robert";
+        driver.findElement(By.xpath("//input[@id = 'FirstName']")).sendKeys(firstName);
+        Thread.sleep(5000);
+        String LastName = "Max";
+        driver.findElement(By.xpath("//input[@id = 'LastName']")).sendKeys(LastName);
+        Thread.sleep(5000);
+
+        Select selectDropdownDay = new Select(driver.findElement(By.xpath("//select[@name = 'DateOfBirthDay']")));
+        selectDropdownDay.selectByValue("4");
+        Thread.sleep(5000);
+        List<WebElement> options = selectDropdownDay.getOptions();
+        Assert.assertEquals(options.size(),32);
+
+        Select selectDropDownMonth = new Select(driver.findElement(By.xpath("//select[@name = 'DateOfBirthMonth']")));
+        selectDropDownMonth.selectByValue("5");
+        Thread.sleep(5000);
+        List<WebElement> optionsMonth = selectDropDownMonth.getOptions();
+        Assert.assertEquals(optionsMonth.size(), 13);
+
+        Select selectDropDownYear = new Select(driver.findElement(By.xpath("//select[@name = 'DateOfBirthYear']")));
+        selectDropDownYear.selectByValue("2000");
+        Thread.sleep(5000);
+        List<WebElement> optionsYear = selectDropDownYear.getOptions();
+        Assert.assertEquals(optionsYear.size(), 112);
+
+        String email = "tejidev306@operades.com";
+        driver.findElement(By.xpath("//input[@id = 'Email']")).sendKeys(email);
+        Thread.sleep(5000);
+
+        String password = "!12345";
+        driver.findElement(By.xpath("//input[@id = 'Password']")).sendKeys(password);
+        driver.findElement(By.xpath("//input[@id = 'ConfirmPassword']")).sendKeys(password);
+
+        driver.findElement(By.xpath("//button[@id = 'register-button']")).click();
+
+        Assert.assertEquals(driver.findElement(By.xpath("//div[@class = 'result']")).getText(), "Your registration completed");
+
+        driver.findElement(By.xpath("//a[@class = 'ico-account']")).click();
+
+        Assert.assertTrue(driver.findElement(By.xpath("//option[@selected = '' and @value = '12']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//option[@selected = '' and @value = '10']")).isDisplayed());
+        Assert.assertTrue(driver.findElement(By.xpath("//option[@selected = '' and @value = '1922']")).isDisplayed());
+
+    }
+    @Test
+    public void TC05_TextBox_TextArea() throws InterruptedException{
+        driver.get("https://www.rode.com/wheretobuy");
+        Thread.sleep(5000);
+        Select selectCountry = new Select(driver.findElement(By.xpath("//select[@id = 'country']")));
+        selectCountry.selectByValue("Vietnam");
+
+        driver.findElement(By.xpath("//input[@id = 'map_search_query']")).click();
+        driver.findElement(By.xpath("//input[@id = 'map_search_query']")).sendKeys("HO CHI MINH");
+        driver.findElement(By.xpath("//button[text()  = 'Search']")).click();
+
+
+        List<WebElement> allDealer = driver.findElements(By.xpath("//h3[text() = 'Dealers']//following-sibling::div//h4"));
+        int count = 0;
+        for(WebElement item : allDealer){
+            if(item.isDisplayed()){
+                count+=1;
+            }
+            System.out.println(item.getText());
+        }
+       Assert.assertEquals(count,16);
+
+    }
+    @Test
+    public void TC06_1_TextBox_TextArea() throws InterruptedException{
+        driver.get("http://jqueryui.com/resources/demos/selectmenu/default.html");
+
+        driver.findElement(By.xpath("//span[@id = 'speed-button']")).click();
+        driver.findElement(By.xpath("//ul[@id = 'speed-menu']//li//div[text() = 'Medium']")).click();
+        driver.findElement(By.xpath("//span[@id = 'speed-button']")).click();
+        driver.findElement(By.xpath("//ul[@id = 'speed-menu']//li//div[text() = 'Slow']")).click();
+        driver.findElement(By.xpath("//span[@id = 'speed-button']")).click();
+        driver.findElement(By.xpath("//ul[@id = 'speed-menu']//li//div[text() = 'Faster']")).click();
+
+
+
+    }
+    @Test
+    public void TC06_2_TextBox_TextArea() throws InterruptedException{
+        driver.get("https://react.semantic-ui.com/maximize/dropdown-example-selection/");
+
+        driver.findElement(By.xpath("//div[@role = 'listbox']")).click();
+        driver.findElement(By.xpath("//div[@class = 'item']//span[text() = 'Christian']")).click();
+
+    }
+
+    @Test
+    public void TC06_3_TextBox_TextArea() throws InterruptedException{
+        driver.get("https://mikerodham.github.io/vue-dropdowns/");
+
+        driver.findElement(By.xpath("//li[@class = 'dropdown-toggle']")).click();
+        driver.findElement(By.xpath("//li[@class='dropdown-toggle']//following-sibling::ul[@class='dropdown-menu']//li/a[contains(text(), 'Second Option')]")).click();
+
+    }
+    @Test
+    public void TC06_4_TextBox_TextArea() throws InterruptedException{
+        driver.get("https://react.semantic-ui.com/maximize/dropdown-example-search-selection/");
+
+        driver.findElement(By.xpath("//input[@class = 'search']")).click();
+        driver.findElement(By.xpath("//input[@class = 'search']")).sendKeys("Algeria");
+        driver.findElement(By.xpath("//div[@class = 'selected item']//span[text() = 'Algeria']")).click();
     }
 
     @AfterClass
